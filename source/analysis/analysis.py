@@ -9,7 +9,6 @@
         - Stochastic Oscillator
         - Relative Strength Index
 
-    Análises frequentistas apontam variação diária semelhante a curva normal.
 '''
 import math
 import pandas as pd
