@@ -41,8 +41,8 @@ class SimpleAITrader(b3.Trader):
             horizon=1 # it project the closing price for next bar
             target='close' # name of the target column
             for asset in assets:
-                curr_shares=b3.backtest.getShares(asset)
-                money=b3.backtest.getBalance()/len(assets) # divide o saldo em dinheiro igualmente entre os ativos
+                curr_shares=b3.backtest.getShares(bts,asset)
+                money=b3.backtest.getBalance(bts)/len(assets) # divide o saldo em dinheiro igualmente entre os ativos
                 free_shares=b3.backtest.getAfforShares(asset,money,dbars)
                 # get new information (bars), transform it in X
                 bars=dbars[asset]
