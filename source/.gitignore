@@ -1,0 +1,2 @@
+*.csv
+/trader/__pycache__

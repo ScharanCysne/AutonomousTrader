@@ -19,7 +19,7 @@ prestart = b3.date(2020,1,20)
 start = b3.date(2020,1,21)
 end = b3.date(2020,11,30)
 capital = 100000
-results_file = 'data_equity_file.csv'
+results_file = 'data_equity_file'
 verbose = False             # Use True if you want debug information for your Trader 
 period=b3.DAILY             # it may be b3.INTRADAY (one minute interval)
 
