@@ -6,9 +6,9 @@ import numpy as np
 from trader.DummyTrader import DummyTrader
 
 if b3.connect():
-    print('Status: Connected to B3 Exchange \n')
+    print('Status: Connected to B3 Exchange')
 else:
-    print('Status: Something went wrong! \n')
+    print('Status: Something went wrong!')
 
 # Create Trader and define assets
 trader = DummyTrader()
