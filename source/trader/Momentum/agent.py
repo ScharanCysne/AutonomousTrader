@@ -5,6 +5,9 @@ import numpy as np
 from scipy.stats import linregress
 import backtrader as bt
 
+from Strategy import Strategy
+from Momentum import Momentum
+
 # Load Data
 stock = pd.read_csv("input/ITUB4.csv", sep="\t")
 
