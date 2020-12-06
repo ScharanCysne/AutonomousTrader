@@ -32,7 +32,8 @@ print(stocks)
 # Calculate momentum of last 90 days
 momentums = stocks.copy(deep=True)
 for ticker in tickers:
-    momentums[ticker] = stocks[ticker].rolling(90).apply(momentum, raw=False)
+    momentums[ticker] = stocks[ticker].rolling(window=90).apply(momentum, raw=False)
+    momentums[ticker] = stocks[ticker].fillna(0)
 
 # Set figure parameters
 plt.figure(figsize=(12, 9))
@@ -41,6 +42,7 @@ plt.ylabel('Stock Price')
 
 # Select best momentum
 bests = momentums.max().sort_values(ascending=False).index[:5]
+
 for best in bests:
     end = momentums[best].index.get_loc(momentums[best].idxmax())
     rets = np.log(stocks[best].iloc[end - 90 : end])
