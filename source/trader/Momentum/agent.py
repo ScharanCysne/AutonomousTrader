@@ -35,36 +35,15 @@ for ticker in tickers:
     momentums[ticker] = stocks[ticker].rolling(window=90).apply(momentum, raw=False)
     momentums[ticker] = stocks[ticker].fillna(0)
 
-# Set figure parameters
-plt.figure(figsize=(12, 9))
-plt.xlabel('Days')
-plt.ylabel('Stock Price')
-
 # Select best momentum
 bests = momentums.max().sort_values(ascending=False).index[:5]
-
-for best in bests:
-    end = momentums[best].index.get_loc(momentums[best].idxmax())
-    rets = np.log(stocks[best].iloc[end - 90 : end])
-    x = np.arange(len(rets))
-    slope, intercept, r_value, p_value, std_err = linregress(x, rets)
-    plt.plot(np.arange(180), stocks[best][end-90:end+90])
-    plt.plot(x, np.e ** (intercept + slope*x))
 
 # Create Cerebro
 cerebro = bt.Cerebro(stdstats=False)
 cerebro.broker.set_coc(True)
 
-spy = bt.feeds.YahooFinanceData(dataname='SPY',
-                                 fromdate=datetime(2012,2,28),
-                                 todate=datetime(2018,2,28),
-                                 plot=False)
-cerebro.adddata(spy)  # add S&P 500 Index
-
 for ticker in tickers:
-    df = pd.read_csv(f"survivorship-free/{ticker}.csv",
-                     parse_dates=True,
-                     index_col=0)
+    df = daily_variations(ticker)
     if len(df) > 100: # data must be long enough to compute 100 day SMA
         cerebro.adddata(bt.feeds.PandasData(dataname=df, plot=False))
 

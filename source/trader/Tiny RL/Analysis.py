@@ -51,7 +51,3 @@ class Analysis:
         self.stock['%K'] = 100*(stock_copy["<CLOSE>"] - stock_copy["<LOW>"])/(stock_copy["<HIGH>"] - stock_copy["<LOW>"]) 
         self.stock['%D'] = self.stock['%K'].rolling(window=3,min_periods=0).mean()
         
-
-    def summary(self):
-        print(self.stock)
-        print(f"Standard Deviation for {self.name}: \n {self.std}")
