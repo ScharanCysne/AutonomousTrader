@@ -8,19 +8,10 @@ import backtrader as bt
 from Strategy import Strategy
 from Momentum import Momentum
 
-# Load Data
-tickers = ["BBAS3","BBDC4","ITUB4","PETR4","VALE3"]
-stocks = (
-    (pd.concat(
-        [pd.read_csv(f"input/{ticker}.csv", sep="\t", index_col='<DATE>', parse_dates=True)[
-            '<CLOSE>'
-        ].rename(ticker)
-        for ticker in tickers],
-        axis=1,
-        sort=True)
-    )
-)
-stocks = stocks.loc[:,~stocks.columns.duplicated()]
+def daily_variations(ticker):
+    stock = pd.read_csv(f"input/{ticker}.csv", sep="\t", index_col='<DATE>', parse_dates=True)['<CLOSE>'].rename(ticker)
+    stock = stock.groupby('<DATE>').tail(1)
+    return stock
 
 def momentum(closes):
     returns = np.log(closes)
@@ -28,14 +19,27 @@ def momentum(closes):
     slope, _, rvalue, _, _ = linregress(x, returns)
     return ((1 + slope) ** 252) * (rvalue ** 2)  # annualize slope and multiply by R^2
 
+# Load Data and create concatenated pandas
+tickers = ["BBAS3","BBDC4","ITUB4","PETR4","VALE3"]
+portfolio = [daily_variations(ticker) for ticker in tickers]
+
+stocks = pd.concat([stock for stock in portfolio],axis=1, sort=True)
+stocks = stocks.loc[:,~stocks.columns.duplicated()]
+stocks = stocks.dropna()
+# Verify if Ok
+print(stocks)
+
+# Calculate momentum of last 90 days
 momentums = stocks.copy(deep=True)
 for ticker in tickers:
     momentums[ticker] = stocks[ticker].rolling(90).apply(momentum, raw=False)
 
+# Set figure parameters
 plt.figure(figsize=(12, 9))
 plt.xlabel('Days')
 plt.ylabel('Stock Price')
 
+# Select best momentum
 bests = momentums.max().sort_values(ascending=False).index[:5]
 for best in bests:
     end = momentums[best].index.get_loc(momentums[best].idxmax())
@@ -45,7 +49,7 @@ for best in bests:
     plt.plot(np.arange(180), stocks[best][end-90:end+90])
     plt.plot(x, np.e ** (intercept + slope*x))
 
-
+# Create Cerebro
 cerebro = bt.Cerebro(stdstats=False)
 cerebro.broker.set_coc(True)
 
