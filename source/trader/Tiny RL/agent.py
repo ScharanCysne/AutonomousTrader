@@ -34,7 +34,7 @@ tinyrl = Agent(capital, analyst)
 theta, sharpes = tinyrl.train(rets_train, epochs=2000, M=8, commission=0.0025, learning_rate=0.3)
 
 # Check results from training and testing
-train_returns = tinyrl.returns(tinyrl.positions(rets_train, theta), rets_test, 0.0025)
+train_returns = tinyrl.returns(tinyrl.positions(rets_train, theta), rets_train, 0.0025)
 test_returns = tinyrl.returns(tinyrl.positions(rets_test, theta), rets_test, 0.0025)
 
 
