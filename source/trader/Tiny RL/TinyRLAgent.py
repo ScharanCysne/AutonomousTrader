@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd 
 import matplotlib.pyplot as plt 
 
-from Analysis import Analysis
-
 '''
     Reinforcement Learning Trading Agent
     
@@ -19,6 +17,7 @@ class Agent:
         self.learning_rate = learning_rate
         self.commission = commission
         self.capital = capital
+        self.M = 8
 
     '''
         Sharpe Ratio
@@ -43,7 +42,7 @@ class Agent:
     '''
     def returns(self, Ft, x, delta):
         T = len(x)
-        rets = Ft[0:T - 1] * x[1:T] - delta * np.abs(Ft[1:T] - Ft[0:T - 1])
+        rets = Ft[0:T - 1]*x[1:T] - delta*np.abs(Ft[1:T] - Ft[0:T - 1])
         return np.concatenate([[0], rets])
 
     '''
@@ -81,18 +80,13 @@ class Agent:
     '''
         Training Reinforment 
     '''
-    def train(self, x, epochs=2000, M=8, commission=0.0025, learning_rate = 0.3):
-        theta = np.random.rand(M + 2)
-        sharpes = np.zeros(epochs) # store sharpes over time
-        for i in range(epochs):
-            print(f"Training Epoch {i}")
-            grad, sharpe = self.gradient(x, theta, commission)
-            theta = theta + grad * learning_rate
+    def train(self, x):
+        theta = np.random.rand(self.M + 2)
+        sharpes = np.zeros(self.epochs) # store sharpes over time
+        for i in range(self.epochs):
+            grad, sharpe = self.gradient(x, theta, self.commission)
+            theta = theta + grad * self.learning_rate
             sharpes[i] = sharpe
-        
+            print(f"Epoch {i+1} finished: Sharpe = {sharpe}")        
         print("Finished Training")
         return theta, sharpes
-
-
-
-

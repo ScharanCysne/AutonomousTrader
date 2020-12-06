@@ -18,8 +18,14 @@ rets = np.array(stock['<CLOSE>'].diff()[1:])
 # Separating Train and Test Samples
 N = int(0.7 * len(rets))            # Number of Training Samples
 P = len(rets) - N                  # Number of Test Samples
-rets_train = rets[:N]             # Training Samples
-rets_test = rets[-P:]             # Test Samples
+x_train = rets[:N]             # Training Samples
+x_test = rets[-P:]             # Test Samples
+
+std = np.std(x_train)
+mean = np.mean(x_train)
+
+x_train = (x_train - mean) / std    
+x_test = (x_test - mean) / std
 
 # Hyper-parameters
 epochs = 2000
@@ -28,14 +34,13 @@ commission = 0.0025
 capital = 10000
 
 # Reinforcement Learning Agent
-analyst = Analysis(stock)
-tinyrl = Agent(capital, analyst)
+tinyRL = Agent(epochs, learning_rate, commission, capital)
 # Train Tiny RL in training samples
-theta, sharpes = tinyrl.train(rets_train, epochs=2000, M=8, commission=0.0025, learning_rate=0.3)
+theta, sharpes = tinyRL.train(x_train)
 
 # Check results from training and testing
-train_returns = tinyrl.returns(tinyrl.positions(rets_train, theta), rets_train, 0.0025)
-test_returns = tinyrl.returns(tinyrl.positions(rets_test, theta), rets_test, 0.0025)
+train_returns = tinyRL.returns(tinyRL.positions(x_train, theta), x_train, 0.0025)
+test_returns = tinyRL.returns(tinyRL.positions(x_test, theta), x_test, 0.0025)
 
 
 # Plot Sharpe Ration Convergence
@@ -48,7 +53,7 @@ plt.show()
 # Plot Training Returns
 plt.figure()
 plt.plot((train_returns).cumsum(), label="Reinforcement Learning Model", linewidth=1)
-plt.plot(rets_train.cumsum(), label="Buy and Hold", linewidth=1)
+plt.plot(x_train.cumsum(), label="Buy and Hold", linewidth=1)
 plt.xlabel('Ticks')
 plt.ylabel('Cumulative Returns')
 plt.legend()
@@ -58,7 +63,7 @@ plt.show()
 # Plot Test Returns
 plt.figure()
 plt.plot((test_returns).cumsum(), label="Reinforcement Learning Model", linewidth=1)
-plt.plot(rets_test.cumsum(), label="Buy and Hold", linewidth=1)
+plt.plot(x_test.cumsum(), label="Buy and Hold", linewidth=1)
 plt.xlabel('Ticks')
 plt.ylabel('Cumulative Returns')
 plt.legend()
