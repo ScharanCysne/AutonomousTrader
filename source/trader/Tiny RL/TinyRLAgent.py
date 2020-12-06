@@ -6,14 +6,6 @@ from Analysis import Analysis
 
 '''
     Reinforcement Learning Trading Agent
-
-    input: x(t) -> [1, close(t), r(t-1), ... , r(t-M), MA(T), EMA(T), MACD(t), SO(t)]
-        @param close(t): closing price
-        @param r(t-N): change in value between time t and t-N
-        @param MA(T): Moving average of the last T entries 
-        @param EMA(T): Exponential Moving Average of the last T entries
-        @param MACD: 
-        @param OS(t): Stochastic Oscillator
     
     optimization parameters: theta(t) -> F(t) = tanh(theta(t)^T.x(t))
     
@@ -27,14 +19,12 @@ class Agent:
         self.learning_rate = learning_rate
         self.commission = commission
         self.capital = capital
-        
 
     '''
         Sharpe Ratio
     '''
     def sharpe_ratio(self, rets):
         return rets.mean() / rets.std()
-
 
     '''
         Ft(x^t.theta) position on the asset
@@ -48,7 +38,6 @@ class Agent:
             Ft[t] = np.tanh(np.dot(theta, xt))
         return Ft
 
-
     '''
         Returns on current asset allocation
     '''
@@ -56,7 +45,6 @@ class Agent:
         T = len(x)
         rets = Ft[0:T - 1] * x[1:T] - delta * np.abs(Ft[1:T] - Ft[0:T - 1])
         return np.concatenate([[0], rets])
-
 
     '''
         Gradient Ascent to maximize Sharpe Ratio
@@ -88,9 +76,7 @@ class Agent:
             grad = grad + dSdtheta
             dFpdtheta = dFdtheta
 
-            
         return grad, S
-
 
     '''
         Training Reinforment 
@@ -102,7 +88,6 @@ class Agent:
             print(f"Training Epoch {i}")
             grad, sharpe = self.gradient(x, theta, commission)
             theta = theta + grad * learning_rate
-
             sharpes[i] = sharpe
         
         print("Finished Training")
