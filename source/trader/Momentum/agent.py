@@ -9,14 +9,11 @@ from Strategy import Strategy
 from Momentum import Momentum
 
 # Load Data
-stock = pd.read_csv("input/ITUB4.csv", sep="\t")
-
-# ::Teddy's Code::
-tickers = pd.read_csv('survivorship-free/tickers.csv', header=None)[1].tolist()
+tickers = ["BBAS3","BBDC4","ITUB4","PETR4","VALE3"]
 stocks = (
     (pd.concat(
-        [pd.read_csv(f"survivorship-free/{ticker}.csv", index_col='date', parse_dates=True)[
-            'close'
+        [pd.read_csv(f"input/{ticker}.csv", sep="\t", index_col='<DATE>', parse_dates=True)[
+            '<CLOSE>'
         ].rename(ticker)
         for ticker in tickers],
         axis=1,
