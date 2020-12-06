@@ -68,12 +68,13 @@ def train(x, epochs=2000, M=8, commission=0.0025, learning_rate = 0.3):
     theta = np.random.rand(M + 2)
     sharpes = np.zeros(epochs) # store sharpes over time
     for i in range(epochs):
+        print(f"Training Epoch {i}")
         grad, sharpe = gradient(x, theta, commission)
         theta = theta + grad * learning_rate
 
         sharpes[i] = sharpe
     
-    print("finished training")
+    print("Finished Training")
     return theta, sharpes
 
 #stocks = ["BBAS3", "BBDC4", "ITUB4", "PETR4", "VALE3"]
