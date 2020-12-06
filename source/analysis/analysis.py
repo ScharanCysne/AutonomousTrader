@@ -7,7 +7,6 @@
         - Exponential Moving Average
         - Moving Average Convergence Divergence
         - Stochastic Oscillator
-        - Relative Strength Index
 
 '''
 import math
@@ -15,15 +14,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 class Analysis:
-    def __init__(self, stock=""):
-        self.name = stock
-        self.stock = pd.read_csv(f"./../data/{stock}.csv", sep="\t")
-        self.daily = self.daily_variations()
+    def __init__(self, stock):
+        self.stock = pd.read_csv(stock)
         self.analysis()    
-
-
-    def daily_variations(self):
-        pass
 
 
     def analysis(self):
@@ -31,10 +24,10 @@ class Analysis:
         self.std = self.stock.std()
         #self.histogram_variation() # Normal
         #self.histogram_volume()    # Qui-Quadrado
-        self.MA(402)
-        self.EMA(402)
-        self.MACD(402)
-        self.StochasticOscillator(402)
+        self.MA(1)
+        self.EMA(1)
+        self.MACD(1)
+        self.StochasticOscillator(1)
 
 
     def histogram_variation(self):
@@ -62,19 +55,18 @@ class Analysis:
 
     def MA(self, t):
         # Common values: 15, 20, 30, 50, 100, and 200 days.
-        # 1 Day == 402
-        self.stock[f'MA{math.floor(t/402)}'] = self.stock["<CLOSE>"].rolling(window=t,min_periods=0).mean()
+        self.stock[f'MA5'] = self.stock["<CLOSE>"].rolling(window=5*t,min_periods=0).mean()
+        self.stock[f'MA8'] = self.stock["<CLOSE>"].rolling(window=8*t,min_periods=0).mean()
+        self.stock[f'MA13'] = self.stock["<CLOSE>"].rolling(window=13*t,min_periods=0).mean()
         
 
     def EMA(self, t):
         # Common values: 10, 20, 30 and 50 days.
-        # 1 Day == 402
-        self.stock[f'EMA{math.floor(t/402)}'] = self.stock["<CLOSE>"].ewm(span=t,adjust=False).mean()
+        self.stock[f'EMA20'] = self.stock["<CLOSE>"].ewm(span=20*t,adjust=False).mean()
 
 
     def MACD(self, t):
         # MACD = 12-Period EMA − 26-Period EMA
-        # 1 Day == 402
         stock_copy = self.stock.copy()     # Dont want to polute stock dataframe
         stock_copy['EMA12'] = stock_copy["<CLOSE>"].ewm(span=12*t,adjust=False).mean()
         stock_copy['EMA26'] = stock_copy["<CLOSE>"].ewm(span=26*t,adjust=False).mean()
@@ -97,7 +89,3 @@ class Analysis:
     
         self.stock['%K'] = 100*(stock_copy["<CLOSE>"] - stock_copy["<LOW>"])/(stock_copy["<HIGH>"] - stock_copy["<LOW>"]) 
         self.stock['%D'] = self.stock['%K'].rolling(window=3,min_periods=0).mean()
-        
-    def summary(self):
-        print(self.stock)
-        print(f"Standard Deviation for {self.name}: \n {self.std}")
