@@ -45,7 +45,7 @@ for i in range(len(stocks)):
     x_test[i] = (x_test[i] - means[i]) / stds[i]
 
 # Hyper-parameters
-epochs = 1000
+epochs = 2
 learning_rate = 0.3
 commission = 0.0025
 capital = 10000
@@ -58,11 +58,16 @@ theta, sharpes = tinyRL.train(x_train)
 # Save individual data
 with open('fittest.txt', 'w') as f:
     print('Fittest Thetas Data.\n', file=f)
-    print(f"Thetas optimized BBAS3: {theta[0]}\n", file=f)
-    print(f"Thetas optimized BBDC4: {theta[1]}\n", file=f)
-    print(f"Thetas optimized ITUB4: {theta[2]}\n", file=f)
-    print(f"Thetas optimized PETR4: {theta[3]}\n", file=f)
-    print(f"Thetas optimized VALE3: {theta[4]}\n", file=f)
+    print(f"Thetas optimized BBAS3: {theta[0]}", file=f)
+    print(f"Sharpes associated: {sharpes[-1][0]}\n", file=f)
+    print(f"Thetas optimized BBDC4: {theta[1]}", file=f)
+    print(f"Sharpes associated: {sharpes[-1][1]}\n", file=f)
+    print(f"Thetas optimized ITUB4: {theta[2]}", file=f)
+    print(f"Sharpes associated: {sharpes[-1][2]}\n", file=f)
+    print(f"Thetas optimized PETR4: {theta[3]}", file=f)
+    print(f"Sharpes associated: {sharpes[-1][3]}\n", file=f)
+    print(f"Thetas optimized VALE3: {theta[4]}", file=f)
+    print(f"Sharpes associated: {sharpes[-1][4]}\n", file=f)
 
 # Check results from training and testing
 train_returns = tinyRL.returns(tinyRL.positions(x_train, theta), x_train, prices_train, 0.0025)
@@ -77,20 +82,23 @@ plt.show()
 
 # Plot Training Returns
 plt.figure()
-plt.plot((train_returns).cumsum(), label="Reinforcement Learning Model", linewidth=1)
-plt.plot(x_train.cumsum(), label="Buy and Hold", linewidth=1)
 plt.xlabel('Ticks')
 plt.ylabel('Cumulative Returns')
-plt.legend()
+plt.legend(stocks)
 plt.title("RL Model vs. Buy and Hold - Training Data")
+for i in range(len(train_returns)):
+    plt.plot(train_returns[i], label="Reinforcement Learning Model", linewidth=1)
+    plt.plot(x_train[i], label="Buy and Hold", linewidth=1)
 plt.show()
 
 # Plot Test Returns
 plt.figure()
-plt.plot((test_returns).cumsum(), label="Reinforcement Learning Model", linewidth=1)
-plt.plot(x_test.cumsum(), label="Buy and Hold", linewidth=1)
 plt.xlabel('Ticks')
 plt.ylabel('Cumulative Returns')
-plt.legend()
+plt.legend(stocks)
 plt.title("RL Model vs. Buy and Hold - Test Data")
+for i in range(len(test_returns)):
+    plt.plot(test_returns[i], label="Reinforcement Learning Model", linewidth=1)
+    plt.plot(x_test[i], label="Buy and Hold", linewidth=1)
+
 plt.show()

@@ -46,13 +46,15 @@ class Agent:
     def returns(self, Fts, xs, prices, delta):
         rets_parc = [Fts[i][0:len(xs[i]) - 1] * xs[i][1:len(xs[i])] - delta * np.abs(Fts[i][1:len(xs[i])] - Fts[i][0:len(xs[i]) - 1]) for i in range(len(xs))]
         dist = rets_parc
+        
         # Calculating portfolio distribuiton        
         output = 0
         for arr in dist:
-            output = np.add(output, np.abs(arr))
+            output = np.add(output, np.abs(arr[:len(xs[0])]))
         for i in range(len(dist)):
             dist[i] = np.concatenate([[0], np.divide(dist[i], output)])
             dist[i][np.isnan(dist[i])] = 0.2
+            dist[i] = dist[i][:len(prices[0])]
         # Calculating capital invested each time
         mi = [np.floor(self.capital*np.divide(dist[i],prices[i])) for i in range(len(xs))] 
         
