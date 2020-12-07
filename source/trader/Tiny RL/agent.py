@@ -15,11 +15,10 @@ portfolio = np.array([pd.read_csv(os.path.join(THIS_FOLDER, f'input\\{stock}.csv
 # Calculate the variations to each dataframe
 rets = [stock['<CLOSE>'].diff()[1:] for stock in portfolio]
 # Stores current price
-prices = [stock['<CLOSE>'] for stock in portfolio]
+prices = [stock['<CLOSE>'].values.tolist() for stock in portfolio]
 # Identify each list of prices and variations
 for i in range(len(stocks)):
     rets[i].name = stocks[i]
-    prices[i].name = stocks[i]
 
 '''
 csv_filename = os.path.join(THIS_FOLDER, 'input\\ITUB4.csv')
@@ -50,7 +49,6 @@ commission = 0.0025
 capital = 10000
 
 # Reinforcement Learning Agent
-analyst = Analysis(prices)
 tinyRL = Agent(epochs, learning_rate, commission, capital, prices)
 # Train Tiny RL in training samples
 theta, sharpes = tinyRL.train(x_train)

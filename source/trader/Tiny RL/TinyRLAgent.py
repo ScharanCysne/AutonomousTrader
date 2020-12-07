@@ -31,32 +31,38 @@ class Agent:
         Ft(x^t.theta) position on the asset
     '''
     def positions(self, xs, thetas):
-        M = [len(thetas) - 2 for theta in thetas]
+        M = [len(theta) - 2 for theta in thetas]
         T = [len(x) for x in xs]
-        Fts = [np.zeros(T[i]) for x in xs]
+        Fts = [np.zeros(T[i]) for i in range(len(xs))]
         for i in range(len(xs)):
             for t in range(M[i], T[i]):
-                xt = np.concatenate([[1], xs[i][t - M:t], [Fts[i][t - 1]]])
+                xt = np.concatenate([[1], xs[i][t - M[i]:t], [Fts[i][t - 1]]])
                 Fts[i][t] = np.tanh(np.dot(thetas[i], xt))
         return Fts
 
     '''
         Returns on current asset allocation
     '''
-    def returns(self, Fts, xs, delta, time):
+    def returns(self, Fts, xs, delta):
         rets_parc = [Fts[i][0:len(xs[i]) - 1] * xs[i][1:len(xs[i])] - delta * np.abs(Fts[i][1:len(xs[i])] - Fts[i][0:len(xs[i]) - 1]) for i in range(len(xs))]
-        dist = [np.mean(rets_parc[i])/np.sum(np.mean(rets_parc)) for i in range(len(xs))]
-        mi = [math.floor(self.capital*dist[i]/self.prices[i][time]) for i in range(len(xs))] 
-        rets = np.dot(rets_parc,mi)
-
+        output = 0
+        dist = rets_parc
+        for arr in dist:
+            output = np.add(output, arr)
+        for i in range(len(dist)):
+            dist[i] = np.divide(dist[i], output)
+            np.nan_to_num(dist[i],  0.2)
+        mi = [math.floor(self.capital*dist[i]/self.prices[i]) for i in range(len(xs))] 
+        rets = rets_parc*mi
+        
         return np.concatenate([[0], rets])
 
     '''
         Gradient Ascent to maximize Sharpe Ratio
     '''
-    def gradient(self, xs, thetas, delta, time):
+    def gradient(self, xs, thetas, delta):
         Fts = self.positions(xs, thetas)
-        R = self.returns(Fts, xs, delta, time)
+        R = self.returns(Fts, xs, delta)
         Ss = np.zeros(len(xs))
         grads = np.zeros(len(xs))
 
@@ -98,7 +104,7 @@ class Agent:
         sharpes = np.zeros(self.epochs) # store sharpes over time
         for i in range(self.epochs):
             print(f"Training Epoch {i}")
-            grads, sharpes = self.gradient(xs, thetas, self.commission, i)
+            grads, sharpes = self.gradient(xs, thetas, self.commission)
             thetas = thetas + grads * self.learning_rate
             sharpes[i] = sharpes
             print(f"Epoch {i+1} finished: Sharpe = {sharpes}")        
