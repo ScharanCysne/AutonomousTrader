@@ -63,7 +63,6 @@ class Agent:
             rets[i] = rets_parc[i]*mi[i]
         
         return rets
-        #return np.concatenate([[0], rets])
 
     '''
         Gradient Ascent to maximize Sharpe Ratio

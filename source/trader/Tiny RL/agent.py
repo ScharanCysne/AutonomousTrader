@@ -45,7 +45,7 @@ for i in range(len(stocks)):
     x_test[i] = (x_test[i] - means[i]) / stds[i]
 
 # Hyper-parameters
-epochs = 2
+epochs = 2000
 learning_rate = 0.3
 commission = 0.0025
 capital = 10000
