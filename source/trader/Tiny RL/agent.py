@@ -33,6 +33,8 @@ N = int(0.7 * len(rets[0]))             # Number of Training Samples
 P = len(rets[0]) - N                    # Number of Test Samples
 x_train = [ret[:N] for ret in rets]     # Training Samples
 x_test = [ret[-P:] for ret in rets]     # Test Samples
+prices_train = [price[:N] for price in prices]
+prices_test = [price[-P:] for price in prices]
 
 # Normalization for stochastic optimization
 stds = [np.std(training_data) for training_data in x_train]
@@ -43,19 +45,28 @@ for i in range(len(stocks)):
     x_test[i] = (x_test[i] - means[i]) / stds[i]
 
 # Hyper-parameters
-epochs = 2000
+epochs = 1000
 learning_rate = 0.3
 commission = 0.0025
 capital = 10000
 
 # Reinforcement Learning Agent
-tinyRL = Agent(epochs, learning_rate, commission, capital, prices)
+tinyRL = Agent(epochs, learning_rate, commission, capital, prices_train)
 # Train Tiny RL in training samples
 theta, sharpes = tinyRL.train(x_train)
 
+# Save individual data
+with open('fittest.txt', 'w') as f:
+    print('Fittest Thetas Data.\n', file=f)
+    print(f"Thetas optimized BBAS3: {theta[0]}\n", file=f)
+    print(f"Thetas optimized BBDC4: {theta[1]}\n", file=f)
+    print(f"Thetas optimized ITUB4: {theta[2]}\n", file=f)
+    print(f"Thetas optimized PETR4: {theta[3]}\n", file=f)
+    print(f"Thetas optimized VALE3: {theta[4]}\n", file=f)
+
 # Check results from training and testing
-train_returns = tinyRL.returns(tinyRL.positions(x_train, theta), x_train, 0.0025)
-test_returns = tinyRL.returns(tinyRL.positions(x_test, theta), x_test, 0.0025)
+train_returns = tinyRL.returns(tinyRL.positions(x_train, theta), x_train, prices_train, 0.0025)
+test_returns = tinyRL.returns(tinyRL.positions(x_test, theta), x_test, prices_test, 0.0025)
 
 # Plot Sharpe Ration Convergence
 plt.figure()
