@@ -80,7 +80,7 @@ def train(x, epochs=2000, M=8, commission=0.0025, learning_rate = 0.3):
 #portfolio = np.array([pd.read_csv(f"input/{stock}.csv", sep="\t") for stock in stocks], dtype=object)
 #rets = [stock['<CLOSE>'].diff()[1:] for stock in portfolio]
 
-name = "VALE3"
+name = "PETR4"
 
 # Load stock to trains TinyRL
 stock = pd.read_csv(f"input/{name}.csv", sep="\t")
@@ -114,7 +114,7 @@ plt.ylabel('Sharpe Ratio')
 plt.show()
 '''
 
-theta = [1.22017626, 0.28236144, 0.90629668, 0.43899471, 0.93361272, 0.62647585, 0.64547422, 1.82452996, 0.07376972, 1.15452448]
+theta = [0.00636868, 0.99213169, 0.96710875, 1.03625064, 0.90010168, 0.93073166, 0.02889846, 0.0408688,  0.18620258,1.4629834]
 
 # Plot Training Returns
 train_returns = returns(positions(x_train, theta), x_train, 0.0025)
@@ -137,14 +137,3 @@ plt.ylabel('Cumulative Returns')
 plt.legend()
 plt.title("RL Model vs. Buy and Hold - Test Data")
 plt.show()
-
-'''
-    r(t) = z(t)/z(t-1) - 1
-    1.09713744 0.60594239 0.59348084 0.54156889 0.46499409 0.59890041 0.51110019 0.82695253 0.83205858 0.84740365
-    1.10547124 0.60358536 0.59118186 0.54112218 0.46525614 0.59642542 0.51784977 0.82749494 0.82801721 0.85438729
-    1.10148825 0.60214377 0.59195473 0.54417474 0.466907   0.59521412 0.51975879 0.82717124 0.8254497  0.85528494
-    1.09312483 0.60564405 0.58744487 0.54238416 0.47314902 0.6016878 0.51622663 0.82144101 0.82993403 0.85242226
-
-    r(t) = (z(t) - z(t-1))/std(r)
-    0.00636868 0.99213169 0.96710875 1.03625064 0.90010168 0.93073166 0.02889846 0.0408688  0.18620258 1.4629834
-'''

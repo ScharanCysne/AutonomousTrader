@@ -16,9 +16,9 @@ trader = TinyRLTrader()
 assets = ['PETR4','VALE3','BBDC4','ITUB4','BBAS3']
 
 # sets Backtest options 
-prestart = b3.date(2020,11,6)
+prestart = b3.date(2020,11,1)
 start = b3.date(2020,11,7)
-end = b3.date(2020,11,10)
+end = b3.date(2020,11,20)
 capital = 100000
 results_file = 'data_equity_file'
 verbose = False                 # Use True if you want debug information for your Trader 

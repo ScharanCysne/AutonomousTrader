@@ -4,13 +4,19 @@ import numpy.random as rand
 
 class TinyRLTrader(b3.Trader):
     def __init__(self):
-        self.thetas = {
-            "PETR4": [0, 0 , 0, 0, 0, 0, 0, 0, 0, 0],
-            "VALE3": [0, 0 , 0, 0, 0, 0, 0, 0, 0, 0],
-            "BBDC4": [0, 0 , 0, 0, 0, 0, 0, 0, 0, 0],
-            "ITUB4": [0, 0 , 0, 0, 0, 0, 0, 0, 0, 0],
-            "BBAS3": [0, 0 , 0, 0, 0, 0, 0, 0, 0, 0]
-        }
+        self.theta = [
+            1.22017626, 
+            0.28236144, 
+            0.90629668, 
+            0.43899471, 
+            0.93361272, 
+            0.62647585, 
+            0.64547422, 
+            1.82452996, 
+            0.07376972, 
+            1.15452448
+        ]
+
         self.stocks = []
         self.rets = {}
         self.prices = {}
@@ -45,15 +51,16 @@ class TinyRLTrader(b3.Trader):
             self.rets[key][-1] = (self.rets[key][-1] - self.means[key])/self.stds[key]
 
         for asset in assets:
-            Ft = self.positions(self.rets[asset], self.thetas[asset])
+            Ft = self.positions(self.rets[asset], self.theta)
             position = limit_cap * Ft
-            number_of_shares = int(round(position/self.prices[asset][-1]))
+            number_of_shares = int(round(position/self.prices[asset][-1]) - ops[f"shares_{asset}"])
         
             # Make orders
             if number_of_shares > 0:     
                 order = b3.buyOrder(asset, number_of_shares)
             else:
             	order = b3.sellOrder(asset, np.abs(number_of_shares))
+        
             orders.append(order)
 
         return orders
