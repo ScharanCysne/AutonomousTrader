@@ -8,5 +8,5 @@ __CT-223 - TÓPICOS DE INTELIGÊNCIA ARTIFICIAL__
 TinyRL é um algoritmo de treinamento de agentes que operam em daytrade na bolsa de valores a partir de aprendizado por reforço. 
 
 Para execução do código executar o arquivo __agent.py__ para treinamento de um único agent que realiza trade com todas as ações definidas no portfolio (não recomendado).
-Ou executar o arquivo __single.py__ para treinamento do agent em uma única ação (recomendado).
+Ou executar o arquivo __single.py__ para treinamento do agent em uma única ação (recomendado). O agent treinado através do single.py tem a capacidade de operar em todos ativos com características similares.
 
